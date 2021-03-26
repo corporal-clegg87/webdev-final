@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--Same on every page. If you change one, don't forget to change them all-->
+    <title>S.E.S. - Home</title>
+    <meta name="description" content="Shanghai Entrepreneurs Society Web Portal">
+    <meta charset="UTF-8">
+    <meta name="keywords" content="Shanghai, startups, entrepreneurship, fundraising, incubator, accelerator">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="refresh" content="600">
+    <meta name="robots" content="noindex,nofollow">
+
+
+    <!--Google font API-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:200,400,900%7CUbuntu" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cardo&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.js" integrity="sha512-MQkEjxbZvzs4TX8ES4/tTIyaYdtDlJzVocnPo0GoysTR0jCmNg0P2is7uqpCoWxmoS9X84CDVzuWgZD/R/Q2oQ==" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheet/styles.css">
+</head>
+
+<body>
+
+
+    <!--Bootstrap toggling nav https://getbootstrap.com/docs/4.3/components/navbar/ with modifications-->
+    <!--Changes
+    * Removed color scheme
+    * Change to material icon burger icon (styled in styles.css)
+        -->
+    <nav class="navbar navbar-expand-sm">
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="material-icons">menu</span>
+        </button>
+        <div class="collapse navbar-collapse nav" id="navbarNav">
+            <a href="index.html" class="nav-link ">Home</a>
+            <a href="events.html" class="nav-link">Events</a>
+            <a href="incubators.html" class="nav-link">Incubators</a>
+            <a href="news.html" class="nav-link">News</a>
+            <a href="startups.html" class="nav-link active">Startups</a>
+        </div>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 d-flex 
+        text-nowrap justify-content-center nopadding">
+
+            <div class="main-header-block">
+                <h1>Shanghai Entrepreneurs Society</h1>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <!--Left-panel shows the time, date and location. This is all custom
+        custom coded apart from some example code from the various api
+        websites -->
+        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 d-xs-flex d-sm-flex 
+        justify-content-sm-center justify-content-xs-center nopadding">
+
+            <div class="info-column justify-content-xs-center" id="left-panel">
+                <!--Place partial time and date-->
+                <script id="timeAndDateTemplate" type="template/handlebars">
+                    {{>timeanddate}}
+                </script>
+                <script>
+                    //Construct partial
+                    partialSrc =
+                        '<h5><u>Time</u></h5>\
+                    <h5>{{time}}</h5>\
+                    <h4><u>Date</u></h4>\
+                    <h5>{{date}}</h5>\
+                    <h4><u>Location</u></h4>\
+                    <h5>{{location}}</h5>';
+
+                    Handlebars.registerPartial("timeanddate", partialSrc);
+                    templateSrc = document.getElementById("timeAndDateTemplate").innerHTML;
+                    var template = Handlebars.compile(templateSrc);
+                    //Get ip address
+                    $.getJSON('http://gd.geobytes.com/GetCityDetails?callback=?', function (data) {
+
+                        var ip = data.geobytesipaddress;
+                        var access_key = 'f3036417a2a949c3b952c2b0f8265058';
+                        //get location info from ip address
+                        $.ajax({
+                            url: 'http://api.ipstack.com/' + ip + '?access_key=' + access_key,
+                            dataType: 'jsonp',
+                            //if successful, extract data from json
+                            success: function (json) {
+                                locationString = json.country_name;
+                                var currentdate = new Date();
+                                //populate partial
+                                var data = {
+                                    time: currentdate.getHours() + ":" + currentdate
+                                    .getMinutes(),
+                                    date: currentdate.getDay() + "/" + currentdate.getMonth() +
+                                        "/" + currentdate.getFullYear(),
+                                    location: locationString
+                                };
+                                //Update html with partial contents
+                                document.getElementById("left-panel").innerHTML += template(data);
+                            }
+                        });
+
+                    })
+                </script>
+            </div>
+        </div>
+        <div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 nopadding">
+            <div class="body-column">
+                <!-------------- https://bootsnipp.com/snippets/6Knvr --------------------->
+
+                <ul class="list-unstyled video-list-thumbs row">
+                    <li class="col-lg-4 col-md-6 col-sm-12 col-xs-12 ">
+                        <iframe src="https://www.youtube.com/embed/IpaTJVbt_tg" frameborder="1" margin-top=5px allowfullscreen width="95%"></iframe>
+                    </li>
+                    <li class="col-lg-4 col-md-6 col-sm-12 col-xs-12 p-1">
+                        <iframe src="https://www.youtube.com/embed/HmrDjvv_ENQ" frameborder="1" allowfullscreen width="95%"></iframe>
+                    </li>
+                    <li class="col-lg-4 col-md-6 col-sm-12 col-xs-12 p-1">
+                        <iframe src="https://www.youtube.com/embed/jRXy7aWxLm0" frameborder="1" allowfullscreen width="95%"></iframe>
+                    </li>
+
+                    <li class="col-lg-4 col-md-6 col-sm-12 col-xs-12" p-1>
+                        <iframe src="https://www.youtube.com/embed/cZI4y1KDx9c" frameborder="1" allowfullscreen width="95%"></iframe>
+                    </li>
+                    <li class="col-lg-4 col-md-6 col-sm-12 col-xs-12 p-1">
+                        <iframe src="https://www.youtube.com/embed/RwmixbasDfU" frameborder="1" allowfullscreen width="95%"></iframe>
+                    </li>
+                    <li class="col-lg-4 col-md-6 col-sm-12 col-xs-12 p-1">
+                        <iframe src="https://www.youtube.com/embed/moOpNQwJufI" frameborder="1" allowfullscreen width="95%"></iframe>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 d-lg-block d-md-block d-sm-none d-none nopadding">
+            <!--Ad Column-->
+            <div class="ad-column">
+
+                <div class="banner-ad">
+                    <a href="https://wework.com/">
+                        <img id="wework-image" src="assets/images/advertise-here.jpg" alt="Advertise here banner ad">
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+</body>
+
+<footer class="col-lg-12 col-md-12 col-sm-12 col-xs-12 d-flex justify-content-center">
+
+    <p>Copyright 2020, S.E.S. <a href=”contact@ses.com”>Contact</a></p>
+
+</footer>
+
+</html>

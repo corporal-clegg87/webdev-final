@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!--Same on every page. If you change one, don't forget to change them all-->
+    <title>S.E.S. - Home</title>
+    <meta name="description" content="Shanghai Entrepreneurs Society Web Portal">
+    <meta charset="UTF-8">
+    <meta name="keywords" content="Shanghai, startups, entrepreneurship, fundraising, incubator, accelerator">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="refresh" content="600">
+    <meta name="robots" content="noindex,nofollow">
+
+
+    <!--Google font API-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:200,400,900%7CUbuntu" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cardo&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.js"
+        integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.js"
+        integrity="sha512-MQkEjxbZvzs4TX8ES4/tTIyaYdtDlJzVocnPo0GoysTR0jCmNg0P2is7uqpCoWxmoS9X84CDVzuWgZD/R/Q2oQ=="
+        crossorigin="anonymous"></script>
+    <script src="text.js"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheet/styles.css">
+</head>
+
+<body>
+
+
+    <!--Bootstrap toggling nav https://getbootstrap.com/docs/4.3/components/navbar/ with modifications-->
+    <!--Changes
+    * Removed color scheme
+    * Change to material icon burger icon (styled in styles.css)
+        -->
+    <nav class="navbar navbar-expand-sm">
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="material-icons">menu</span>
+        </button>
+        <div class="collapse navbar-collapse nav" id="navbarNav">
+            <a href="index.html" class="nav-link active">Home</a>
+            <a href="events.html" class="nav-link">Events</a>
+            <a href="incubators.html" class="nav-link">Incubators</a>
+            <a href="news.html" class="nav-link">News</a>
+            <a href="startups.html" class="nav-link">Startups</a>
+        </div>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 d-flex 
+        text-nowrap justify-content-center nopadding">
+
+            <div class="main-header-block">
+                <h1>Shanghai Entrepreneurs Society</h1>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <!--Left-panel shows the time, date and location. This is all custom
+        custom coded apart from some example code from the various api
+        websites -->
+        <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12 d-xs-flex d-sm-flex 
+        justify-content-sm-center justify-content-xs-center nopadding">
+
+            <div class="info-column justify-content-xs-center" id="left-panel">
+                <!--Place partial time and date-->
+                <script id="timeAndDateTemplate" type="template/handlebars">
+                    {{>timeanddate}}
+                </script>
+                <script>
+                    //Construct partial
+                    partialSrc =
+                        '<h5><u>Time</u></h5>\
+                    <h5>{{time}}</h5>\
+                    <h4><u>Date</u></h4>\
+                    <h5>{{date}}</h5>\
+                    <h4><u>Location</u></h4>\
+                    <h5>{{location}}</h5>';
+
+                    Handlebars.registerPartial("timeanddate", partialSrc);
+                    templateSrc = document.getElementById("timeAndDateTemplate").innerHTML;
+                    var template = Handlebars.compile(templateSrc);
+                    //Get ip address
+                    $.getJSON('http://gd.geobytes.com/GetCityDetails?callback=?', function (data) {
+
+                        var ip = data.geobytesipaddress;
+                        var access_key = 'f3036417a2a949c3b952c2b0f8265058';
+                        //get location info from ip address
+                        $.ajax({
+                            url: 'http://api.ipstack.com/' + ip + '?access_key=' + access_key,
+                            dataType: 'jsonp',
+                            //if successful, extract data from json
+                            success: function (json) {
+                                locationString = json.country_name;
+                                var currentdate = new Date();
+                                //populate partial
+                                var data = {
+                                    time: currentdate.getHours() + ":" + currentdate
+                                    .getMinutes(),
+                                    date: currentdate.getDay() + "/" + currentdate.getMonth() +
+                                        "/" + currentdate.getFullYear(),
+                                    location: locationString
+                                };
+                                //Update html with partial contents
+                                document.getElementById("left-panel").innerHTML += template(data);
+                            }
+                        });
+
+                    })
+                </script>
+            </div>
+        </div>
+        <!--End of Left-Panel-->
+        <!-- News carousel taken from https://bootsnipp.com/snippets/O5q0N with changes 
+
+                Changes:
+                * Changed all text and images
+                * Removed some sections
+                * Adjusted padding and columns
+                * Adjusted x and y positioning
+                -->
+        <div class="col-lg-8 col-md-8 col-sm-12 sm-pl-2 col-xs-12 d-xs-flex  
+        justify-content-xs-center nopadding">
+            <div class="body-column">
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-12  py-2 pr-4">
+                        <div id="featured" class="carousel slide carousel-fade" data-ride="carousel">
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <div class="card bg-dark text-white">
+                                        <img class="card-img img-fluid"
+                                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMMAAACCCAMAAADMpYxRAAAAY1BMVEUAAAD///8iIiIICAgQEBA0NDQmJibR0dHh4eFkZGT09PTe3t7m5ua4uLgVFRWjo6M/Pz8cHBxYWFitra1zc3PY2Nju7u5tbW2UlJSCgoLHx8dGRkaLi4t8fHxPT0+dnZ0tLS1P+J0YAAAEKUlEQVR4nO2bbZeyIBCGdau1yMyXtMxe/P+/8qlUuEFr22U6Z3gO96dd4ACXMAwMFCQzxxUsgnngujwDD3kGHvIMPOQZeMgz8JBn4CHPwEOegYc8Aw95Bh7yDDzkGXjIM/CQZ+Ahz8BD9gyrUGk1yk0h96CSvxLLVlH2DDX0Mvoyc4/TDHvLRjURzKU1dNPsW16pvLiRyfW3baMoAgYciKORd4W8QqamV9s2NVHYNHzrUM9JYshS3/6ws24TRcFwgo5utZz95DA0x8y6TRQFQwpfe611L1IZ4iJTj4dRFVYi8Q8462tIz4VK38jUfWXfoiYShgyteqbSCxgG6Tqyktaiqfw0dDZcyNQWVt1Ipp7DlKBFFA1DCpNG2e4OyJQ1iGKqBhsR7Zc2qreVrBAsWg3DNizOdb3LRx797yJiuMBADKsObpWkQ1BmLo6rxZPafimqfSvsi4bVH4yklI3AgN0W4jNJ21QM+NHzrublxDBcQl0bCm9Hdn6AgehcAWyjlENYGwzaUvxXkTHgIvRIAKjTUOhkIuAy9mfRneOgz3erXoA1tH2RtBozhPY2QccA+7sy0yxa+uViTHArbN0y4Xkadn674Fv9Jwa7TScIbmpe1vqGCBnAIjY484dhyKJq2SkWyLB5WesbImTA7dFMWYcYPFm7atJOTb4FhrVtw5SxGfj2YLzbybJnKGvrrikZ5toUGXqYTxdWlNVlusTbIo2RHSYYhtk+N5yZ2nSIJ5Rvi5Qhm1j/2y4rORszRlmEGEfWfifaWOV2hDAEa5qofVaUGQNGB/R5UpZGWIwtg761hmE4h5EzDIHB0Hfv5jocYtAHYtgL3RYsk0GFy81Z9mtRM+Sajxi+cDhmCC55L+sTKfkdCg5ElKm0EQOdyBnwSqU/+6yEYwywBY+7bs8eMRqnGFQoIO5iSN2e3G2G2H2G3hG4zDDEAVxmGA50DjPIwJ67DLPIdYZvOGI7yrAM5pHrDE2QrB1n2ATOM9xDLi8YksOml+0R6IMM99jYCwZ1PSFs70k/xiDuf79gYHwWlQyP6yu3GaLHQzGnGfp+ucoQ9+vqXcAgL7R6sWZ4XFj1sYp5KXtaGauP8uC8Ysad0lo+FYCrlFB/O5apGE5le5n1ifetx1jOfbhFjLXgPWbYPt34AEMu1OtKvJAWxW7VaX/CIL/1xegHGAro1GrqasjQ6XlV74meoY1hnUnKnxmsXwHRM9TaXe35RwTrq90PMJR6DHj5A4KwvVH8AENtPPxspt5ogAieMFEzJFdzer82a4qnrtQMl/GL+svz6SRIHpKRM0w9DDuMnl49tCxofgVBzdBOt7K/RrpdiLLYUb1z9b+l4SHPwEOegYc8Aw95Bh7yDDzkGXjIM/CQZ+Ahz8BDnoGHPAMPeQYe8gw85Bl46P9gaL8cV5b+A9+5LlZU+c3cAAAAAElFTkSuQmCC"
+                                            alt="">
+                                        <div class="card-img-overlay d-flex ">
+                                            <a href="https://youtu.be/IpaTJVbt_tg" class="align-self-end">
+                                                <span class="badge">Startup</span>
+                                                <h4 class="card-title">Prof - YC Demo Day</h4>
+
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <div class="card bg-dark text-white">
+                                        <img class="card-img img-fluid"
+                                            src="http://www.nihub.com/wp-content/uploads/2019/12/nihub_landing-pad-startup-accelerator-china-1.png"
+                                            alt="">
+                                        <div class="card-img-overlay d-flex ">
+                                            <a href="http://www.nihub.com/" class="align-self-end">
+                                                <span class="badge">Accelerator</span>
+                                                <h4 class="card-title">It's all about NI!</h4>
+
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <div class="card bg-dark text-white">
+                                        <img class="card-img img-fluid"
+                                            src="https://2utfff4d3dkt3biit53nsvep-wpengine.netdna-ssl.com/wp-content/uploads/2019/03/biotech_1.png"
+                                            alt="">
+                                        <div class="card-img-overlay d-flex ">
+                                            <a href="https://news.crunchbase.com/news/recursion-gets-funding-for-new-drug-discovery-with-bayer-led-239m-series-d/"
+                                                class="align-self-end">
+                                                <span class="badge">News</span>
+                                                <h4 class="card-title">Drug Discovery With Bayer-led $239M</h4>
+
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <div class="card bg-dark text-white">
+                                        <img class="card-img img-fluid" src="assets/images/total-anihilation-logo.jpg"
+                                            alt="">
+                                        <div class="card-img-overlay d-flex">
+                                            <a href="https://wehustle.cn/shanghai-city/search/events/networking/retro-lan-party-edition-3-14503.html"
+                                                class="align-self-end">
+                                                <span class="badge">Event</span>
+                                                <h4 class="card-title">LAN Party</h4>
+
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-12  py-2 pr-1   d-lg-block">
+                        <div class="row">
+                            <div class="col-6 pb-2 mg-1	">
+                                <div class="card bg-dark text-white">
+                                    <img class="card-img img-fluid"
+                                        src="https://2utfff4d3dkt3biit53nsvep-wpengine.netdna-ssl.com/wp-content/uploads/2019/03/biotech_1.png"
+                                        alt="">
+                                    <div class="card-img-overlay d-flex">
+                                        <a href="https://news.crunchbase.com/news/recursion-gets-funding-for-new-drug-discovery-with-bayer-led-239m-series-d/"
+                                            class="align-self-end">
+                                            <span class="badge">News</span>
+                                            <h6 class="card-title">Drug Discovery With Bayer-led $239M</h6>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 pb-2 mg-2	">
+                                <div class="card bg-dark text-white">
+                                    <img class="card-img img-fluid" src="assets/images/total-anihilation-logo.jpg"
+                                        alt="">
+                                    <div class="card-img-overlay d-flex">
+                                        <a href="https://wehustle.cn/shanghai-city/search/events/networking/retro-lan-party-edition-3-14503.html"
+                                            class="align-self-end">
+                                            <span class="badge">Event</span>
+                                            <h6 class="card-title">Lan Party</h6>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 pb-2 mg-3	">
+                                <div class="card bg-dark text-white">
+                                    <img class="card-img img-fluid"
+                                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMMAAACCCAMAAADMpYxRAAAAY1BMVEUAAAD///8iIiIICAgQEBA0NDQmJibR0dHh4eFkZGT09PTe3t7m5ua4uLgVFRWjo6M/Pz8cHBxYWFitra1zc3PY2Nju7u5tbW2UlJSCgoLHx8dGRkaLi4t8fHxPT0+dnZ0tLS1P+J0YAAAEKUlEQVR4nO2bbZeyIBCGdau1yMyXtMxe/P+/8qlUuEFr22U6Z3gO96dd4ACXMAwMFCQzxxUsgnngujwDD3kGHvIMPOQZeMgz8JBn4CHPwEOegYc8Aw95Bh7yDDzkGXjIM/CQZ+Ahz8BD9gyrUGk1yk0h96CSvxLLVlH2DDX0Mvoyc4/TDHvLRjURzKU1dNPsW16pvLiRyfW3baMoAgYciKORd4W8QqamV9s2NVHYNHzrUM9JYshS3/6ws24TRcFwgo5utZz95DA0x8y6TRQFQwpfe611L1IZ4iJTj4dRFVYi8Q8462tIz4VK38jUfWXfoiYShgyteqbSCxgG6Tqyktaiqfw0dDZcyNQWVt1Ipp7DlKBFFA1DCpNG2e4OyJQ1iGKqBhsR7Zc2qreVrBAsWg3DNizOdb3LRx797yJiuMBADKsObpWkQ1BmLo6rxZPafimqfSvsi4bVH4yklI3AgN0W4jNJ21QM+NHzrublxDBcQl0bCm9Hdn6AgehcAWyjlENYGwzaUvxXkTHgIvRIAKjTUOhkIuAy9mfRneOgz3erXoA1tH2RtBozhPY2QccA+7sy0yxa+uViTHArbN0y4Xkadn674Fv9Jwa7TScIbmpe1vqGCBnAIjY484dhyKJq2SkWyLB5WesbImTA7dFMWYcYPFm7atJOTb4FhrVtw5SxGfj2YLzbybJnKGvrrikZ5toUGXqYTxdWlNVlusTbIo2RHSYYhtk+N5yZ2nSIJ5Rvi5Qhm1j/2y4rORszRlmEGEfWfifaWOV2hDAEa5qofVaUGQNGB/R5UpZGWIwtg761hmE4h5EzDIHB0Hfv5jocYtAHYtgL3RYsk0GFy81Z9mtRM+Sajxi+cDhmCC55L+sTKfkdCg5ElKm0EQOdyBnwSqU/+6yEYwywBY+7bs8eMRqnGFQoIO5iSN2e3G2G2H2G3hG4zDDEAVxmGA50DjPIwJ67DLPIdYZvOGI7yrAM5pHrDE2QrB1n2ATOM9xDLi8YksOml+0R6IMM99jYCwZ1PSFs70k/xiDuf79gYHwWlQyP6yu3GaLHQzGnGfp+ucoQ9+vqXcAgL7R6sWZ4XFj1sYp5KXtaGauP8uC8Ysad0lo+FYCrlFB/O5apGE5le5n1ifetx1jOfbhFjLXgPWbYPt34AEMu1OtKvJAWxW7VaX/CIL/1xegHGAro1GrqasjQ6XlV74meoY1hnUnKnxmsXwHRM9TaXe35RwTrq90PMJR6DHj5A4KwvVH8AENtPPxspt5ogAieMFEzJFdzer82a4qnrtQMl/GL+svz6SRIHpKRM0w9DDuMnl49tCxofgVBzdBOt7K/RrpdiLLYUb1z9b+l4SHPwEOegYc8Aw95Bh7yDDzkGXjIM/CQZ+Ahz8BDnoGHPAMPeQYe8gw85Bl46P9gaL8cV5b+A9+5LlZU+c3cAAAAAElFTkSuQmCC"
+                                        alt="">
+                                    <div class="card-img-overlay d-flex">
+                                        <a href="https://youtu.be/IpaTJVbt_tg" class="align-self-end">
+                                            <span class="badge">Startup</span>
+                                            <h6 class="card-title">Proof - YC Demo</h6>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6 pb-2 mg-4	">
+                                <div class="card bg-dark text-white">
+                                    <img class="card-img img-fluid"
+                                        src="http://www.nihub.com/wp-content/uploads/2019/12/nihub_landing-pad-startup-accelerator-china-1.png"
+                                        alt="">
+                                    <div class="card-img-overlay d-flex">
+                                        <a href="http://www.nihub.com/" class="align-self-end">
+                                            <span class="badge">Accelerator</span>
+                                            <h6 class="card-title">It's all about Ni!
+                                            </h6>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--End of carousel-->
+        <div class="col-lg-2 col-md-2 d-lg-block d-md-block d-sm-none d-none nopadding">
+            <!--Ad Column-->
+            <div class="ad-column">
+
+                <div class="banner-ad">
+                    <a href="#">
+                        <img id="wework-image" src="assets/images/advertise-here.jpg" alt="Advertise here banner ad">
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+
+
+</body>
+
+
+
+
+<footer class="col-lg-12 col-md-12 col-sm-12 col-xs-12 d-flex justify-content-center">
+
+            <p>Copyright 2020, S.E.S. <a href=”contact@ses.com”>Contact</a></p>
+
+</footer>
+
+</html>
